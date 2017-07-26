@@ -1,0 +1,31 @@
+$background: #333;
+.content {
+  background: $background;
+}
+
+.name-field {
+  width: 200px;
+  color: #333;
+  .txt-name {
+    border: none;
+  }
+  .txt-name:focus {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+}
+
+input:not([type]):focus:not([readonly]) + label, input[type=text]:focus:not([readonly]) + label, input[type=password]:focus:not([readonly]) + label, input[type=email]:focus:not([readonly]) + label, input[type=url]:focus:not([readonly]) + label, input[type=time]:focus:not([readonly]) + label, input[type=date]:focus:not([readonly]) + label, input[type=datetime]:focus:not([readonly]) + label, input[type=datetime-local]:focus:not([readonly]) + label, input[type=tel]:focus:not([readonly]) + label, input[type=number]:focus:not([readonly]) + label, input[type=search]:focus:not([readonly]) + label, textarea.materialize-textarea:focus:not([readonly]) + label {
+  color: #333;
+}
+.input-field label:not(.label-icon).active {
+
+  top: 1.3rem;
+  font-size: .8rem;
+
+}
+
+body{
+  font-family: 'Roboto', sans-serif;
+}

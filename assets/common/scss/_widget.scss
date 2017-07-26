@@ -1,0 +1,135 @@
+.widget {
+  border: 1px solid #333;
+
+  .tab {
+    li {
+      background: #333;
+    }
+  }
+}
+
+.item-right {
+  float: right;
+}
+
+.item-airport {
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 12px;
+  color: #b3afaf;
+  width: 100%;
+}
+
+.country-flag {
+  width: 20px;
+  height: 12px;
+  float: right;
+  background-image: url("../img/default-flag.png");
+  background-repeat: no-repeat;
+
+}
+
+.sri {
+  background-image: url("../img/sri.png");
+  background-repeat: no-repeat;
+}
+
+.ui-widget {
+  font-family: "Roboto", Arial, sans-serif;
+  font-size: 1.1em;
+}
+
+.ui-widget-content {
+  max-height: 300px;
+  border: none;
+  border-radius: 2px;
+  box-shadow: 0px 0px 22px rgba(51, 51, 51, 0.39);
+  overflow: auto;
+}
+
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus, .ui-widget-content .ui-state-focus .item-airport, .ui-widget-header .ui-state-focus .item-airport {
+  border-color: #a5d6ef;
+  background: #c3e2f1;
+  font-weight: normal;
+  color: #164880;
+}
+
+.ui-menu .ui-menu-item a {
+  padding-left: 14px;
+}
+
+.ui-corner-all, .ui-corner-bottom, .ui-corner-right, .ui-corner-br {
+  border-radius: 0px;
+}
+
+.ui-autocomplete-category {
+  font-weight: bold;
+  padding: .3em .8em;
+  margin: .8em 0 .2em;
+  margin-bottom: 0px;
+  line-height: 1.5;
+  border-bottom: 1px solid #eaeaea;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.ui-menu .ui-menu-item {
+  width: initial;
+  clear: both;
+}
+.ui-widget-content a {
+  color: #6f6f6f;
+}
+.list-header {
+  padding: 10px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #333;
+}
+
+.fmf-countires {
+  padding: 2px 12px;
+  max-height: 350px;
+  overflow: auto;
+
+  .country-item {
+    cursor: pointer;
+  }
+
+}
+
+.input-bar {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.input-bar:before, .input-bar:after {
+  content: '';
+  height: 2px;
+  width: 0;
+  bottom: 1px;
+  position: absolute;
+  background: #87a1bf;
+  transition: 0.2s ease all;
+}
+
+.input-bar:before {
+  left: 50%;
+}
+
+.input-bar:after {
+  right: 50%;
+}
+
+.input-field input:focus ~ .input-bar:before, .input-field input:focus ~ .input-bar:after {
+  width: 50%;
+}
+
+.overlay{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: #404040;
+}
