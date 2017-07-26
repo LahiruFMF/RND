@@ -23091,7 +23091,9 @@ $(function(){
 
 
         function custom_source(request, response) {
-            var matcher = new RegExp($.ui.autocomplete.escapeRegex(request.term), "i");
+         //  var matcher = new RegExp($.ui.autocomplete.escapeRegex(request.term), "i");
+            var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
+          //  response( $.grep( data, function( item ){
             response($.grep(countries, function (value) {
                 return matcher.test(value.city)
                     || matcher.test(value.country)
@@ -23109,7 +23111,7 @@ $(function(){
         $( "#departure" ).catcomplete({
             source: custom_source,
             delay:0,
-            minLength: 3,
+            minLength: 1,
             autoFocus: true,
             open : function() {
                 $(".overlay").remove();
@@ -23118,16 +23120,15 @@ $(function(){
             },
             close : function(event, ui) {
                $(".overlay").remove();
-                event.preventDefault();
-                if ( event.which == 1 ) {
-                    $("ul.ui-autocomplete").show();
-                    $("ul.ui-autocomplete").data('keep-open', 1);
+            },
+            response: function(event, ui) {
+                if (!ui.content.length) {
+                    var noResult = { country:"",city:"NO RESULT FOUND",code:"",airport:"Please type country, city, airport or country code" };
+                    ui.content.push(noResult);
+                    //$("#message").text("No results found");
+                } else {
+                    $("#message").empty();
                 }
-                else if ( $("ul.ui-autocomplete").data('keep-open') == 1) {
-                    $("ul.ui-autocomplete").show();
-                    $("ul.ui-autocomplete").data('keep-open', 0);
-                }
-return false;
             }
 
         });
