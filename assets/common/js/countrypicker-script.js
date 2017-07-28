@@ -1,10 +1,246 @@
 /**
- * Created by LahiruC on 7/27/2017.
- */
-/**
  * Created by lahiru.c on 6/13/2017.
  */
 
+/**
+ * Created by FMF-LAP on 6/5/2017.
+ */
+
+
+$(function () {
+
+
+    var countries = [
+        {
+            city: "Colombo",
+            country: "Sri Lanka",
+            code: "CMB",
+            class: "sl"
+        },
+        {
+            city: "Sydney",
+            country: "Australia",
+            code: "SYD",
+            class: "aus"
+        },
+        {
+            city: "New Delhi",
+            country: "India",
+            code: "IND",
+            class: "ind"
+        },
+        {
+            city: "London",
+            country: "England, UK",
+            code: "LON",
+            class: "lon"
+        },
+        {
+            city: "Heathrow",
+            country: "England, UK",
+            code: "LHR",
+            class: "lon"
+        },
+        {
+            city: "Stansted",
+            country: "England, UK",
+            code: "STN",
+            class: "lon"
+        },
+        {
+            city: "Luton",
+            country: "England, UK",
+            code: "LON",
+            class: "lon"
+        }
+    ];
+
+    $component = '#from';
+    var fromSearches = [];
+    if (!(typeof $.cookie('recentUserSearchesArray') === 'undefined')) {
+        fromSearches = $.cookie("recentUserSearchesArray").split(',');
+        console.log("fromSearches :::::::: "+fromSearches);
+        for(var i=0;i<fromSearches.length;i++){
+            makeSearch=  fromSearches[i];
+
+                console.log("make search : "+ Object.values(makeSearch));
+
+            for(key in makeSearch) {
+               console.log(makeSearch[key]);
+            }
+
+        }
+    }
+
+    function custom_source(request, response) {
+        var matcher = new RegExp($.ui.autocomplete.escapeRegex(request.term), "i");
+        response($.grep(countries, function (value) {
+            return matcher.test(value.city)
+                || matcher.test(value.country)
+                || matcher.test(value.code);
+        }));
+    }
+
+    $($component).autocomplete({
+        minLength: 0,
+        source: custom_source,
+        autoFocus: true,
+        open: function () {
+            $('ul.ui-autocomplete').addClass("fmf-widget-countries");
+            $('ul.ui-autocomplete').prepend('<li><div class="fmf-widget-list-header">HEADER</div></li>');
+            var buttonlist = "";
+
+
+            if (!(typeof $.cookie('recentSearchArray') === 'undefined')) {
+                $('ul.ui-autocomplete').prepend('<li id="fmf-widget-recent-search"><div class="fmf-widget-list-header">Recent Searches</div><div class="fmf-widget-button-list"></div></li>');
+                $('#fmf-widget-recent-search').append('<input type="button" id="fmf-widget-clear" value="Clear" onclick="fmf-widget-clear">');
+            }
+
+
+            $('.fmf-widget-button-list').empty();
+            for (var i = (fromSearches.length - 1); i >= 0; i--) {
+                $('.fmf-widget-button-list').append('<input class="fmf-widget-country" id="fmf-widget-recent-country" value="' + fromSearches[i] + '" type="button"></div>');
+            }
+
+        },
+
+        select: function (event, ui) {
+            $($component).val(ui.item.city + " (" + ui.item.code + ")");
+            $.cookie("departure", ui.item.city + " (" + ui.item.code + ")");
+
+
+            fromSearches.push($.cookie("departure"));
+            if (fromSearches.length > 3) {
+                fromSearches.shift();
+            }
+
+            $.cookie("recentSearchArray", fromSearches, {expires: 7});
+            return false;
+        }
+
+
+    }).bind('focus', function () {
+        $(this).autocomplete("search", "")
+    });
+
+    $($component).data("ui-autocomplete")._renderItem = function (ul, item) {
+
+        var $li = $('<li>'),
+            $img = $('<img>');
+
+
+        $img.attr({
+            //   src: 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.8.0/flags/1x1/' + item.icon,
+            alt: item.label
+        });
+
+        $li.attr('data-value', item.label);
+        $li.append('<a class="fmf-widget-country-item">');
+        $li.find('a').append(item.city).append(item.country).append(item.code).append('<div class="fmf-widget country-flag ' + item.class + '">');
+
+
+        return $li.appendTo(ul);
+    };
+
+    $(".ui-autocomplete").on("click", "#fmf-widget-clear", function () {
+        fromSearches = [];
+        $.removeCookie("recentUserSearchesArray");
+        $("#fmf-widget-recent-search").remove();
+    });
+
+
+    $("#btn-submit").click()
+    {
+
+    }
+
+
+    /****************/
+    /* To Search    */
+    /****************/
+
+    $componentTo = '#to';
+    var toSearches = [];
+    if (!(typeof $.cookie('recentSearchArray') === 'undefined')) {
+        toSearches = $.cookie("recentSearchArray").split(',');
+    }
+
+    function custom_source(request, response) {
+        var matcher = new RegExp($.ui.autocomplete.escapeRegex(request.term), "i");
+        response($.grep(countries, function (value) {
+            return matcher.test(value.city)
+                || matcher.test(value.country)
+                || matcher.test(value.code);
+        }));
+    }
+
+    $($componentTo).autocomplete({
+        minLength: 0,
+        source: custom_source,
+        autoFocus: true,
+        open: function () {
+
+        },
+
+        select: function (event, ui) {
+            $($componentTo).val(ui.item.city + " (" + ui.item.code + ")");
+            $.cookie("departure", ui.item.city + " (" + ui.item.code + ")");
+
+
+            toSearches.push($.cookie("departure"));
+            if (toSearches.length > 3) {
+                toSearches.shift();
+            }
+
+            $.cookie("recentSearchArray", toSearches, {expires: 7});
+            return false;
+        }
+
+
+    }).bind('focus', function () {
+        $(this).autocomplete("search", "")
+    });
+
+    $($componentTo).data("ui-autocomplete")._renderItem = function (ul, item) {
+
+        var $li = $('<li>'),
+            $img = $('<img>');
+
+
+        $img.attr({
+            //   src: 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.8.0/flags/1x1/' + item.icon,
+            alt: item.label
+        });
+
+        $li.attr('data-value', item.label);
+        $li.append('<a class="fmf-widget-country-item">');
+        $li.find('a').append(item.city).append(item.country).append(item.code).append('<div class="fmf-widget-country-flag ' + item.class + '">');
+
+
+        return $li.appendTo(ul);
+    };
+
+
+    var recentUserSearches = [];
+
+    $("#search-flight").click(function () {
+       // alert("clicked :"+$("#from").val()+" : "+$("#to").val()+" : "+$("#departure").val()+" : "+$("#return").val());
+        console.log("Submit clicked");
+        var makeSearchObject = {from:$("#from").val(), to:$("#to").val(), depart:$("#departure").val(), ret:$("#return").val()};
+       console.log("DDDDD "+makeSearchObject);
+        recentUserSearches.push(makeSearchObject);
+        if (recentUserSearches.length > 3) {
+            recentUserSearches.shift();
+        }
+
+        $.cookie("recentUserSearchesArray", recentUserSearches, {expires: 7});
+        console.log(recentUserSearches);
+
+
+    });
+
+
+});
 
 
 /*************/
@@ -1443,7 +1679,7 @@ $(function(){
         "city": "Dhaka",
         "code": "DAC",
         "class": "ban",
-        "airport": "Dhaka   Hazrat Shahjalal International Airport",
+        "airport": "Dhaka \/ Hazrat Shahjalal International Airport",
         "label": "Dhaka, Bangladesh (DAC)"
     }, {
         "country": "Bangladesh",
@@ -1720,11 +1956,11 @@ $(function(){
         "label": "Fortaleza, Brazil (FOR)"
     }, {
         "country": "Brazil",
-        "city": "Brasilia",
+        "city": "Bras\u00c3\u0192\u00c6\u2019\u00c3\u201a\u00c2\u00adlia",
         "code": "BSB",
         "class": "bra",
         "airport": "Presidente Juscelino Kubistschek International Airport",
-        "label": "Brasilia, Brazil (BSB)"
+        "label": "Bras\u00c3\u0192\u00c6\u2019\u00c3\u201a\u00c2\u00adlia, Brazil (BSB)"
     }, {
         "country": "Brazil",
         "city": "Campo Grande",
@@ -1867,11 +2103,11 @@ $(function(){
         "label": "Parintins, Brazil (PIN)"
     }, {
         "country": "Brazil",
-        "city": "Vitoria",
+        "city": "Vit\u00c3\u0192\u00c6\u2019\u00c3\u201a\u00c2\u00b3ria",
         "code": "VIX",
         "class": "bra",
         "airport": "Eurico de Aguiar Salles Airport",
-        "label": "Vitoria, Brazil (VIX)"
+        "label": "Vit\u00c3\u0192\u00c6\u2019\u00c3\u201a\u00c2\u00b3ria, Brazil (VIX)"
     }, {
         "country": "Brazil",
         "city": "Vitoria Da Conquista",
@@ -1961,7 +2197,7 @@ $(function(){
         "city": "Florianapolis",
         "code": "FLN",
         "class": "bra",
-        "airport": "Hercilio Luz International Airport",
+        "airport": "Herc\u00edlio Luz International Airport",
         "label": "Florianpolis, Brazil (FLN)"
     }, {
         "country": "Brazil",
@@ -1972,11 +2208,11 @@ $(function(){
         "label": "Pelotas, Brazil (PET)"
     }, {
         "country": "Brazil",
-        "city": "Belem",
+        "city": "Bel\u00c3\u0192\u00c6\u2019\u00c3\u201a\u00c2\u00a9m",
         "code": "BEL",
         "class": "bra",
         "airport": "Val de Cans International Airport",
-        "label": "Belem, Brazil (BEL)"
+        "label": "Bel\u00c3\u0192\u00c6\u2019\u00c3\u201a\u00c2\u00a9m, Brazil (BEL)"
     }, {
         "country": "Brazil",
         "city": "Cuiaba",
@@ -2007,11 +2243,11 @@ $(function(){
         "label": "Sao Paulo, Brazil - All Airports (SAO)"
     }, {
         "country": "Brazil",
-        "city": "Goiania",
+        "city": "Goi\u00c3\u0192\u00c6\u2019\u00c3\u201a\u00c2\u00a2nia",
         "code": "GYN",
         "class": "bra",
         "airport": "Santa Genoveva Airport",
-        "label": "Goiania, Brazil (GYN)"
+        "label": "Goi\u00c3\u0192\u00c6\u2019\u00c3\u201a\u00c2\u00a2nia, Brazil (GYN)"
     }, {
         "country": "Brazil",
         "city": "Campina Grande",
@@ -2021,17 +2257,17 @@ $(function(){
         "label": "Campina Grande, Brazil (CPV)"
     }, {
         "country": "Brazil",
-        "city": "Santarem",
+        "city": "Santar\u00c3\u0192\u00c6\u2019\u00c3\u201a\u00c2\u00af\u00c3\u0192\u00e2\u20ac\u0161\u00c3\u201a\u00c2\u00bf\u00c3\u0192\u00e2\u20ac\u0161\u00c3\u201a\u00c2\u00bdm",
         "code": "STM",
         "class": "bra",
         "airport": "Maestro Wilson Fonseca Airport",
-        "label": "Santarem, Brazil (STM)"
+        "label": "Santar\u00c3\u0192\u00c6\u2019\u00c3\u201a\u00c2\u00af\u00c3\u0192\u00e2\u20ac\u0161\u00c3\u201a\u00c2\u00bf\u00c3\u0192\u00e2\u20ac\u0161\u00c3\u201a\u00c2\u00bdm, Brazil (STM)"
     }, {
         "country": "Brazil",
         "city": "Sao Paulo",
         "code": "GRU",
         "class": "bra",
-        "airport": "Sao Paulo International Airport",
+        "airport": "S\u00e3o Paulo International Airport",
         "label": "Sao Paulo, Brazil (GRU)"
     }, {
         "country": "Brazil",
@@ -2416,7 +2652,7 @@ $(function(){
         "city": "Hay River",
         "code": "YHY",
         "class": "can",
-        "airport": "Hay River   Merlyn Carter Airport",
+        "airport": "Hay River \/ Merlyn Carter Airport",
         "label": "Hay River, Canada (YHY)"
     }, {
         "country": "Canada",
@@ -2525,11 +2761,11 @@ $(function(){
         "label": "Dawson City, Canada (YDA)"
     }, {
         "country": "Canada",
-        "city": "Lutselke Snowdrift",
+        "city": "Lutselke\/Snowdrift",
         "code": "YSG",
         "class": "can",
         "airport": "Lutselk'e Airport",
-        "label": "Lutselke Snowdrift, Canada (YSG)"
+        "label": "Lutselke\/Snowdrift, Canada (YSG)"
     }, {
         "country": "Canada",
         "city": "Deline",
@@ -2556,7 +2792,7 @@ $(function(){
         "city": "Halifax",
         "code": "YHZ",
         "class": "can",
-        "airport": "Halifax   Stanfield International Airport",
+        "airport": "Halifax \/ Stanfield International Airport",
         "label": "Halifax, Canada (YHZ)"
     }, {
         "country": "Canada",
@@ -2889,11 +3125,11 @@ $(function(){
         "label": "Cranbrook, Canada (YXC)"
     }, {
         "country": "Canada",
-        "city": "Kitchener Waterloo",
+        "city": "Kitchener\/Waterloo",
         "code": "YKF",
         "class": "can",
         "airport": "Waterloo Airport",
-        "label": "Kitchener Waterloo, Canada (YKF)"
+        "label": "Kitchener\/Waterloo, Canada (YKF)"
     }, {
         "country": "Canada",
         "city": "Fort Albany",
@@ -3438,7 +3674,7 @@ $(function(){
         "city": "Montreal",
         "code": "YUL",
         "class": "can",
-        "airport": "Montreal   Pierre Elliott Trudeau International Airport",
+        "airport": "Montreal \/ Pierre Elliott Trudeau International Airport",
         "label": "Montreal, Canada (YUL)"
     }, {
         "country": "Canada",
@@ -3648,7 +3884,7 @@ $(function(){
         "city": "Whitehorse",
         "code": "YXY",
         "class": "can",
-        "airport": "Whitehorse   Erik Nielsen International Airport",
+        "airport": "Whitehorse \/ Erik Nielsen International Airport",
         "label": "Whitehorse, Canada (YXY)"
     }, {
         "country": "Canada",
@@ -3669,7 +3905,7 @@ $(function(){
         "city": "Sydney",
         "code": "YQY",
         "class": "can",
-        "airport": "Sydney   J.A. Douglas McCurdy Airport",
+        "airport": "Sydney \/ J.A. Douglas McCurdy Airport",
         "label": "Sydney, Canada (YQY)"
     }, {
         "country": "Canada",
@@ -3753,7 +3989,7 @@ $(function(){
         "city": "Castlegar",
         "code": "YCG",
         "class": "can",
-        "airport": "Castlegar West Kootenay Regional Airport",
+        "airport": "Castlegar\/West Kootenay Regional Airport",
         "label": "Castlegar, Canada (YCG)"
     }, {
         "country": "Canada",
@@ -3767,7 +4003,7 @@ $(function(){
         "city": "Timmins",
         "code": "YTS",
         "class": "can",
-        "airport": "Timmins Victor M. Power",
+        "airport": "Timmins\/Victor M. Power",
         "label": "Timmins, Canada (YTS)"
     }, {
         "country": "Canada",
@@ -3778,18 +4014,18 @@ $(function(){
         "label": "Tuktoyaktuk, Canada (YUB)"
     }, {
         "country": "Canada",
-        "city": "Tulita Fort Norman",
+        "city": "Tulita\/Fort Norman",
         "code": "ZFN",
         "class": "can",
         "airport": "Tulita Airport",
-        "label": "Tulita Fort Norman, Canada (ZFN)"
+        "label": "Tulita\/Fort Norman, Canada (ZFN)"
     }, {
         "country": "Canada",
-        "city": "Tulita Fort Norman",
+        "city": "Tulita\/Fort Norman",
         "code": "ZFN",
         "class": "can",
         "airport": "Tulita Airport",
-        "label": "Tulita Fort Norman, Canada (ZFN)"
+        "label": "Tulita\/Fort Norman, Canada (ZFN)"
     }, {
         "country": "Canada",
         "city": "Thunder Bay",
@@ -4061,7 +4297,7 @@ $(function(){
         "city": "Mont Tremblant",
         "code": "YTM",
         "class": "can",
-        "airport": "La Macaza   Mont-Tremblant International Inc Airport",
+        "airport": "La Macaza \/ Mont-Tremblant International Inc Airport",
         "label": "Mont Tremblant, Canada (YTM)"
     }, {
         "country": "Canada",
@@ -4103,7 +4339,7 @@ $(function(){
         "city": "Winnipeg",
         "code": "YWG",
         "class": "can",
-        "airport": "Winnipeg   James Armstrong Richardson International Airport",
+        "airport": "Winnipeg \/ James Armstrong Richardson International Airport",
         "label": "Winnipeg, Canada (YWG)"
     }, {
         "country": "Canada",
@@ -5262,11 +5498,11 @@ $(function(){
         "label": "Chengdu, China (CTU)"
     }, {
         "country": "China",
-        "city": "Nanking Nanjing",
+        "city": "Nanking\/Nanjing",
         "code": "NKG",
         "class": "chi",
         "airport": "Nanjing Lukou Airport",
-        "label": "Nanking Nanjing, China (NKG)"
+        "label": "Nanking\/Nanjing, China (NKG)"
     }, {
         "country": "China",
         "city": "Shijiazhuang",
@@ -6354,11 +6590,11 @@ $(function(){
         "label": "Indaselassie, Ethiopia (SHC)"
     }, {
         "country": "Ethiopia",
-        "city": "Gode",
+        "city": "Gode\/Iddidole",
         "code": "GDE",
         "class": "eth",
         "airport": "Gode Airport",
-        "label": "Gode, Ethiopia (GDE)"
+        "label": "Gode\/Iddidole, Ethiopia (GDE)"
     }, {
         "country": "Ethiopia",
         "city": "Makale",
@@ -6515,18 +6751,18 @@ $(function(){
         "label": "Ngau Island, Fiji (NGI)"
     }, {
         "country": "Finland",
-        "city": "Kokkola",
+        "city": "Kokkola\/Pietarsaari",
         "code": "KOK",
         "class": "fin",
         "airport": "Kruunupyy Airport",
-        "label": "Kokkola, Finland (KOK)"
+        "label": "Kokkola\/Pietarsaari, Finland (KOK)"
     }, {
         "country": "Finland",
-        "city": "Kemi",
+        "city": "Kemi\/Tornio",
         "code": "KEM",
         "class": "fin",
         "airport": "Kemi-Tornio Airport",
-        "label": "Kemi, Finland (KEM)"
+        "label": "Kemi\/Tornio, Finland (KEM)"
     }, {
         "country": "Finland",
         "city": "Kittila",
@@ -6739,11 +6975,11 @@ $(function(){
         "label": "Beziers, France (BZR)"
     }, {
         "country": "France",
-        "city": "Lourdes Tarbes",
+        "city": "Lourdes\/Tarbes",
         "code": "LDE",
         "class": "fra",
         "airport": null,
-        "label": "Lourdes Tarbes, France (LDE)"
+        "label": "Lourdes\/Tarbes, France (LDE)"
     }, {
         "country": "France",
         "city": "Rennes",
@@ -6977,11 +7213,11 @@ $(function(){
         "label": "Aurillac, France (AUR)"
     }, {
         "country": "France",
-        "city": "Metz Nancy",
+        "city": "Metz\/Nancy",
         "code": "ETZ",
         "class": "fra",
         "airport": "Metz-Nancy-Lorraine Airport",
-        "label": "Metz Nancy, France (ETZ)"
+        "label": "Metz\/Nancy, France (ETZ)"
     }, {
         "country": "France",
         "city": "Clermont-Ferrand",
@@ -7257,11 +7493,11 @@ $(function(){
         "label": "Stuttgart, Germany (STR)"
     }, {
         "country": "Germany",
-        "city": "Leipzig Halle",
+        "city": "Leipzig\/Halle",
         "code": "LEJ",
         "class": "ger",
         "airport": "Leipzig Halle Airport",
-        "label": "Leipzig Halle, Germany (LEJ)"
+        "label": "Leipzig\/Halle, Germany (LEJ)"
     }, {
         "country": "Germany",
         "city": "Friedrichshafen",
@@ -7376,11 +7612,11 @@ $(function(){
         "label": "Munich, Germany (MUC)"
     }, {
         "country": "Germany",
-        "city": "Karlsruhe Baden Baden",
+        "city": "Karlsruhe\/Baden Baden",
         "code": "FKB",
         "class": "ger",
         "airport": "Karlsruhe Baden-Baden Airport",
-        "label": "Karlsruhe Baden Baden, Germany (FKB)"
+        "label": "Karlsruhe\/Baden Baden, Germany (FKB)"
     }, {
         "country": "Germany",
         "city": "Westerland",
@@ -7467,11 +7703,11 @@ $(function(){
         "label": "Naxos, Greece (JNX)"
     }, {
         "country": "Greece",
-        "city": "Preveza Lefkas",
+        "city": "Preveza\/Lefkas",
         "code": "PVK",
         "class": "gre",
         "airport": "Aktion National Airport",
-        "label": "Preveza Lefkas, Greece (PVK)"
+        "label": "Preveza\/Lefkas, Greece (PVK)"
     }, {
         "country": "Greece",
         "city": "Leros",
@@ -7722,7 +7958,7 @@ $(function(){
         "city": "Nuuk",
         "code": "GOH",
         "class": "gre",
-        "airport": "Godthaab Nuuk Airport",
+        "airport": "Godthaab \/ Nuuk Airport",
         "label": "Nuuk, Greenland (GOH)"
     }, {
         "country": "Greenland",
@@ -9440,7 +9676,7 @@ $(function(){
         "city": "Turin",
         "code": "TRN",
         "class": "ita",
-        "airport": "Torino Caselle International Airport",
+        "airport": "Torino \/ Caselle International Airport",
         "label": "Turin, Italy (TRN)"
     }, {
         "country": "Italy",
@@ -9475,42 +9711,42 @@ $(function(){
         "city": "Milan",
         "code": "BGY",
         "class": "ita",
-        "airport": "Bergamo Orio Al Serio Airport",
+        "airport": "Bergamo \/ Orio Al Serio Airport",
         "label": "Milan, Italy (BGY)"
     }, {
         "country": "Italy",
         "city": "Cagliari",
         "code": "CAG",
         "class": "ita",
-        "airport": "Cagliari Elmas Airport",
+        "airport": "Cagliari \/ Elmas Airport",
         "label": "Cagliari, Italy (CAG)"
     }, {
         "country": "Italy",
         "city": "Florence",
         "code": "FLR",
         "class": "ita",
-        "airport": "Firenze Peretola Airport",
+        "airport": "Firenze \/ Peretola Airport",
         "label": "Florence, Italy (FLR)"
     }, {
         "country": "Italy",
         "city": "Catania",
         "code": "CTA",
         "class": "ita",
-        "airport": "Catania Fontanarossa Airport",
+        "airport": "Catania \/ Fontanarossa Airport",
         "label": "Catania, Italy (CTA)"
     }, {
         "country": "Italy",
         "city": "Foggia",
         "code": "FOG",
         "class": "ita",
-        "airport": "Foggia Gino Lisa Airport",
+        "airport": "Foggia \/ Gino Lisa Airport",
         "label": "Foggia, Italy (FOG)"
     }, {
         "country": "Italy",
         "city": "Bari",
         "code": "BRI",
         "class": "ita",
-        "airport": "Bari Palese International Airport",
+        "airport": "Bari \/ Palese International Airport",
         "label": "Bari, Italy (BRI)"
     }, {
         "country": "Italy",
@@ -9524,21 +9760,21 @@ $(function(){
         "city": "Olbia",
         "code": "OLB",
         "class": "ita",
-        "airport": "Olbia Costa Smeralda Airport",
+        "airport": "Olbia \/ Costa Smeralda Airport",
         "label": "Olbia, Italy (OLB)"
     }, {
         "country": "Italy",
         "city": "Rimini",
         "code": "RMI",
         "class": "ita",
-        "airport": "Rimini Miramare - Federico Fellini International Airport",
+        "airport": "Rimini \/ Miramare - Federico Fellini International Airport",
         "label": "Rimini, Italy (RMI)"
     }, {
         "country": "Italy",
         "city": "Trapani",
         "code": "TPS",
         "class": "ita",
-        "airport": "Trapani Birgi Airport",
+        "airport": "Trapani \/ Birgi Airport",
         "label": "Trapani, Italy (TPS)"
     }, {
         "country": "Italy",
@@ -9559,14 +9795,14 @@ $(function(){
         "city": "Perugia",
         "code": "PEG",
         "class": "ita",
-        "airport": "Perugia San Egidio Airport",
+        "airport": "Perugia \/ San Egidio Airport",
         "label": "Perugia, Italy (PEG)"
     }, {
         "country": "Italy",
         "city": "Ancona",
         "code": "AOI",
         "class": "ita",
-        "airport": "Ancona Falconara Airport",
+        "airport": "Ancona \/ Falconara Airport",
         "label": "Ancona, Italy (AOI)"
     }, {
         "country": "Italy",
@@ -9587,28 +9823,28 @@ $(function(){
         "city": "Alghero",
         "code": "AHO",
         "class": "ita",
-        "airport": "Alghero Fertilia Airport",
+        "airport": "Alghero \/ Fertilia Airport",
         "label": "Alghero, Italy (AHO)"
     }, {
         "country": "Italy",
         "city": "Pisa",
         "code": "PSA",
         "class": "ita",
-        "airport": "Pisa San Giusto - Galileo Galilei International Airport",
+        "airport": "Pisa \/ San Giusto - Galileo Galilei International Airport",
         "label": "Pisa, Italy (PSA)"
     }, {
         "country": "Italy",
         "city": "Cuneo",
         "code": "CUF",
         "class": "ita",
-        "airport": "Cuneo Levaldigi Airport",
+        "airport": "Cuneo \/ Levaldigi Airport",
         "label": "Cuneo, Italy (CUF)"
     }, {
         "country": "Italy",
         "city": "Venice",
         "code": "VCE",
         "class": "ita",
-        "airport": "Venezia Tessera -  Marco Polo Airport",
+        "airport": "Venezia \/ Tessera -  Marco Polo Airport",
         "label": "Venice, Italy (VCE)"
     }, {
         "country": "Italy",
@@ -9629,14 +9865,14 @@ $(function(){
         "city": "Venice",
         "code": "TSF",
         "class": "ita",
-        "airport": "Treviso Sant'Angelo Airport",
+        "airport": "Treviso \/ Sant'Angelo Airport",
         "label": "Venice, Italy (TSF)"
     }, {
         "country": "Italy",
         "city": "Brindisi",
         "code": "BDS",
         "class": "ita",
-        "airport": "Brindisi Casale Airport",
+        "airport": "Brindisi \/ Casale Airport",
         "label": "Brindisi, Italy (BDS)"
     }, {
         "country": "Italy",
@@ -9650,14 +9886,14 @@ $(function(){
         "city": "Bologna",
         "code": "BLQ",
         "class": "ita",
-        "airport": "Bologna Borgo Panigale Airport",
+        "airport": "Bologna \/ Borgo Panigale Airport",
         "label": "Bologna, Italy (BLQ)"
     }, {
         "country": "Italy",
         "city": "Verona",
         "code": "VRN",
         "class": "ita",
-        "airport": "Verona Villafranca Airport",
+        "airport": "Verona \/ Villafranca Airport",
         "label": "Verona, Italy (VRN)"
     }, {
         "country": "Italy",
@@ -9671,21 +9907,21 @@ $(function(){
         "city": "Palermo",
         "code": "PMO",
         "class": "ita",
-        "airport": "Palermo Punta Raisi Airport",
+        "airport": "Palermo \/ Punta Raisi Airport",
         "label": "Palermo, Italy (PMO)"
     }, {
         "country": "Italy",
         "city": "Genoa",
         "code": "GOA",
         "class": "ita",
-        "airport": "Genova Sestri Cristoforo Colombo Airport",
+        "airport": "Genova \/ Sestri Cristoforo Colombo Airport",
         "label": "Genoa, Italy (GOA)"
     }, {
         "country": "Italy",
         "city": "Trieste",
         "code": "TRS",
         "class": "ita",
-        "airport": "Trieste Ronchi Dei Legionari",
+        "airport": "Trieste \/ Ronchi Dei Legionari",
         "label": "Trieste, Italy (TRS)"
     }, {
         "country": "Jamaica",
@@ -10494,11 +10730,11 @@ $(function(){
         "label": "Vilnius, Lithuania (VNO)"
     }, {
         "country": "Lithuania",
-        "city": "Klaipeda Palanga",
+        "city": "Klaipeda\/Palanga",
         "code": "PLQ",
         "class": "lit",
         "airport": "Palanga International Airport",
-        "label": "Klaipeda Palanga, Lithuania (PLQ)"
+        "label": "Klaipeda\/Palanga, Lithuania (PLQ)"
     }, {
         "country": "Luxembourg",
         "city": "Luxembourg",
@@ -11208,11 +11444,11 @@ $(function(){
         "label": "Chetumal, Mexico (CTM)"
     }, {
         "country": "Mexico",
-        "city": "Leon Guanajuato",
+        "city": "Leon\/Guanajuato",
         "code": "BJX",
         "class": "mex",
         "airport": null,
-        "label": "Leon Guanajuato, Mexico (BJX)"
+        "label": "Leon\/Guanajuato, Mexico (BJX)"
     }, {
         "country": "Mexico",
         "city": "Ciudad Victoria",
@@ -11376,18 +11612,18 @@ $(function(){
         "label": "Guadalajara, Mexico (GDL)"
     }, {
         "country": "Mexico",
-        "city": "Ixtapa Zihuatanejo",
+        "city": "Ixtapa\/Zihuatanejo",
         "code": "ZIH",
         "class": "mex",
         "airport": "Ixtapa Zihuatanejo International Airport",
-        "label": "Ixtapa Zihuatanejo, Mexico (ZIH)"
+        "label": "Ixtapa\/Zihuatanejo, Mexico (ZIH)"
     }, {
         "country": "Mexico",
-        "city": "Ixtapa Zihuatanejo",
+        "city": "Ixtapa\/Zihuatanejo",
         "code": "ZIH",
         "class": "mex",
         "airport": "Ixtapa Zihuatanejo International Airport",
-        "label": "Ixtapa Zihuatanejo, Mexico (ZIH)"
+        "label": "Ixtapa\/Zihuatanejo, Mexico (ZIH)"
     }, {
         "country": "Mexico",
         "city": "Poza Rica",
@@ -12611,7 +12847,7 @@ $(function(){
         "city": "Harstad-Narvik",
         "code": "EVE",
         "class": "nor",
-        "airport": "Harstad Narvik Airport, Evenes",
+        "airport": "Harstad\/Narvik Airport, Evenes",
         "label": "Harstad-Narvik, Norway (EVE)"
     }, {
         "country": "Norway",
@@ -14441,12 +14677,12 @@ $(function(){
         "airport": "Kigali International Airport",
         "label": "Kigali, Rwanda (KGL)"
     }, {
-        "country": "Reunion",
+        "country": "R\u00c3\u0192\u00c6\u2019\u00c3\u201a\u00c2\u00af\u00c3\u0192\u00e2\u20ac\u0161\u00c3\u201a\u00c2\u00bf\u00c3\u0192\u00e2\u20ac\u0161\u00c3\u201a\u00c2\u00bdunion",
         "city": "Saint Denis",
         "code": "RUN",
-        "class": "reu",
+        "class": "r\u00c3",
         "airport": "Roland Garros Airport",
-        "label": "Saint Denis, Reunion (RUN)"
+        "label": "Saint Denis, R\u00c3\u0192\u00c6\u2019\u00c3\u201a\u00c2\u00af\u00c3\u0192\u00e2\u20ac\u0161\u00c3\u201a\u00c2\u00bf\u00c3\u0192\u00e2\u20ac\u0161\u00c3\u201a\u00c2\u00bdunion (RUN)"
     }, {
         "country": "Saint Helena",
         "city": "Georgetown",
@@ -14816,7 +15052,7 @@ $(function(){
         "city": "Santa Cruz Is",
         "code": "SCZ",
         "class": "sol",
-        "airport": "Santa Cruz Graciosa Bay Luova Airport",
+        "airport": "Santa Cruz\/Graciosa Bay\/Luova Airport",
         "label": "Santa Cruz Is, Solomon Islands (SCZ)"
     }, {
         "country": "Solomon Islands",
@@ -14844,21 +15080,21 @@ $(function(){
         "city": "Fera Island",
         "code": "FRE",
         "class": "sol",
-        "airport": "Fera Maringe Airport",
+        "airport": "Fera\/Maringe Airport",
         "label": "Fera Island, Solomon Islands (FRE)"
     }, {
         "country": "Solomon Islands",
         "city": "Fera Island",
         "code": "FRE",
         "class": "sol",
-        "airport": "Fera Maringe Airport",
+        "airport": "Fera\/Maringe Airport",
         "label": "Fera Island, Solomon Islands (FRE)"
     }, {
         "country": "Solomon Islands",
         "city": "Fera Island",
         "code": "FRE",
         "class": "sol",
-        "airport": "Fera Maringe Airport",
+        "airport": "Fera\/Maringe Airport",
         "label": "Fera Island, Solomon Islands (FRE)"
     }, {
         "country": "Solomon Islands",
@@ -14900,7 +15136,7 @@ $(function(){
         "city": "Rennell",
         "code": "RNL",
         "class": "sol",
-        "airport": "Rennell Tingoa Airport",
+        "airport": "Rennell\/Tingoa Airport",
         "label": "Rennell, Solomon Islands (RNL)"
     }, {
         "country": "Solomon Islands",
@@ -15250,7 +15486,7 @@ $(function(){
         "city": "Vitoria",
         "code": "VIT",
         "class": "spa",
-        "airport": "Vitoria Foronda Airport",
+        "airport": "Vitoria\/Foronda Airport",
         "label": "Vitoria, Spain (VIT)"
     }, {
         "country": "Spain",
@@ -15541,11 +15777,11 @@ $(function(){
         "label": "Skelleftea, Sweden (SFT)"
     }, {
         "country": "Sweden",
-        "city": "Skovde",
+        "city": "Sk\u00c3\u0192\u00c6\u2019\u00c3\u201a\u00c2\u00b6vde",
         "code": "KVB",
         "class": "swe",
         "airport": null,
-        "label": "Skovde, Sweden (KVB)"
+        "label": "Sk\u00c3\u0192\u00c6\u2019\u00c3\u201a\u00c2\u00b6vde, Sweden (KVB)"
     }, {
         "country": "Sweden",
         "city": "Ostersund",
@@ -15611,11 +15847,11 @@ $(function(){
         "label": "Halmstad, Sweden (HAD)"
     }, {
         "country": "Sweden",
-        "city": "Borlange Falun",
+        "city": "Borlange\/Falun",
         "code": "BLE",
         "class": "swe",
         "airport": "Borlange Airport",
-        "label": "Borlange Falun, Sweden (BLE)"
+        "label": "Borlange\/Falun, Sweden (BLE)"
     }, {
         "country": "Sweden",
         "city": "Lycksele",
@@ -15674,11 +15910,11 @@ $(function(){
         "label": "Malmo, Sweden (MMX)"
     }, {
         "country": "Sweden",
-        "city": "Angelholm Helsingborg",
+        "city": "Angelholm\/Helsingborg",
         "code": "AGH",
         "class": "swe",
         "airport": null,
-        "label": "Angelholm Helsingborg, Sweden (AGH)"
+        "label": "Angelholm\/Helsingborg, Sweden (AGH)"
     }, {
         "country": "Sweden",
         "city": "Hemavan",
@@ -15919,11 +16155,11 @@ $(function(){
         "label": "Bern, Switzerland (BRN)"
     }, {
         "country": "Switzerland",
-        "city": "Basel Mulhouse",
+        "city": "Basel\/Mulhouse",
         "code": "BSL",
         "class": "swi",
         "airport": "EuroAirport Basel-Mulhouse-Freiburg Airport",
-        "label": "Basel Mulhouse, Switzerland (BSL)"
+        "label": "Basel\/Mulhouse, Switzerland (BSL)"
     }, {
         "country": "Switzerland",
         "city": "Altenrhein",
@@ -16395,11 +16631,11 @@ $(function(){
         "label": "Niuafo'ou, Tonga (NFO)"
     }, {
         "country": "Trinidad",
-        "city": "Piarco Port of Spain",
+        "city": "Piarco\/Port of Spain",
         "code": "POS",
         "class": "tri",
         "airport": "Piarco International Airport",
-        "label": "Piarco Port of Spain, Trinidad (POS)"
+        "label": "Piarco\/Port of Spain, Trinidad (POS)"
     }, {
         "country": "Trinidad and Tobago",
         "city": "Tobago",
@@ -16493,11 +16729,11 @@ $(function(){
         "label": "Kahramanmaras, Turkey (KCM)"
     }, {
         "country": "Turkey",
-        "city": "Edremit Korfez",
+        "city": "Edremit\/Korfez",
         "code": "EDO",
         "class": "tur",
         "airport": null,
-        "label": "Edremit Korfez, Turkey (EDO)"
+        "label": "Edremit\/Korfez, Turkey (EDO)"
     }, {
         "country": "Turkey",
         "city": "Konya",
@@ -17312,18 +17548,18 @@ $(function(){
         "label": "Santa Ana, US (SNA)"
     }, {
         "country": "US",
-        "city": "Bradenton Sarasota",
+        "city": "Bradenton\/Sarasota",
         "code": "SRQ",
         "class": "us",
         "airport": "Sarasota Bradenton International Airport",
-        "label": "Bradenton Sarasota, US (SRQ)"
+        "label": "Bradenton\/Sarasota, US (SRQ)"
     }, {
         "country": "US",
-        "city": "Bradenton Sarasota",
+        "city": "Bradenton\/Sarasota",
         "code": "SRQ",
         "class": "us",
         "airport": "Sarasota Bradenton International Airport",
-        "label": "Bradenton Sarasota, US (SRQ)"
+        "label": "Bradenton\/Sarasota, US (SRQ)"
     }, {
         "country": "US",
         "city": "San Angelo",
@@ -17336,7 +17572,7 @@ $(function(){
         "city": "Santa Maria",
         "code": "SMX",
         "class": "us",
-        "airport": "Santa Maria Pub Capt G Allan Hancock Field",
+        "airport": "Santa Maria Pub\/Capt G Allan Hancock Field",
         "label": "Santa Maria, US (SMX)"
     }, {
         "country": "US",
@@ -17438,18 +17674,18 @@ $(function(){
         "label": "Santa Barbara, US (SBA)"
     }, {
         "country": "US",
-        "city": "Vail Eagle",
+        "city": "Vail\/Eagle",
         "code": "EGE",
         "class": "us",
         "airport": "Eagle County Regional Airport",
-        "label": "Vail Eagle, US (EGE)"
+        "label": "Vail\/Eagle, US (EGE)"
     }, {
         "country": "US",
-        "city": "Vail Eagle",
+        "city": "Vail\/Eagle",
         "code": "EGE",
         "class": "us",
         "airport": "Eagle County Regional Airport",
-        "label": "Vail Eagle, US (EGE)"
+        "label": "Vail\/Eagle, US (EGE)"
     }, {
         "country": "US",
         "city": "Atlanta",
@@ -17931,29 +18167,29 @@ $(function(){
         "city": "Scottsbluff",
         "code": "BFF",
         "class": "us",
-        "airport": "Western Neb. Rgnl William B. Heilig Airport",
+        "airport": "Western Neb. Rgnl\/William B. Heilig Airport",
         "label": "Scottsbluff, US (BFF)"
     }, {
         "country": "US",
-        "city": "Scranton Wilkes Barre",
+        "city": "Scranton\/Wilkes Barre",
         "code": "AVP",
         "class": "us",
         "airport": "Wilkes Barre Scranton International Airport",
-        "label": "Scranton Wilkes Barre, US (AVP)"
+        "label": "Scranton\/Wilkes Barre, US (AVP)"
     }, {
         "country": "US",
-        "city": "Scranton Wilkes Barre",
+        "city": "Scranton\/Wilkes Barre",
         "code": "AVP",
         "class": "us",
         "airport": "Wilkes Barre Scranton International Airport",
-        "label": "Scranton Wilkes Barre, US (AVP)"
+        "label": "Scranton\/Wilkes Barre, US (AVP)"
     }, {
         "country": "US",
-        "city": "Scranton Wilkes Barre",
+        "city": "Scranton\/Wilkes Barre",
         "code": "AVP",
         "class": "us",
         "airport": "Wilkes Barre Scranton International Airport",
-        "label": "Scranton Wilkes Barre, US (AVP)"
+        "label": "Scranton\/Wilkes Barre, US (AVP)"
     }, {
         "country": "US",
         "city": "Casper",
@@ -18082,21 +18318,21 @@ $(function(){
         "label": "Dothan, US (DHN)"
     }, {
         "country": "US",
-        "city": "Dallas Fort Worth",
+        "city": "Dallas \/ Fort Worth",
         "code": "DFW",
         "class": "us",
         "airport": "Dallas Fort Worth International Airport",
         "label": "Dallas - Fort Worth, US (DFW)"
     }, {
         "country": "US",
-        "city": "Dallas Fort Worth",
+        "city": "Dallas \/ Fort Worth",
         "code": "DFW",
         "class": "us",
         "airport": "Dallas Fort Worth International Airport",
         "label": "Dallas - Fort Worth, US (DFW)"
     }, {
         "country": "US",
-        "city": "Dallas Fort Worth",
+        "city": "Dallas \/ Fort Worth",
         "code": "DFW",
         "class": "us",
         "airport": "Dallas Fort Worth International Airport",
@@ -18530,18 +18766,18 @@ $(function(){
         "label": "Laredo, US (LRD)"
     }, {
         "country": "US",
-        "city": "Altoona Martinsburg",
+        "city": "Altoona\/Martinsburg",
         "code": "AOO",
         "class": "us",
         "airport": "Altoona Blair County Airport",
-        "label": "Altoona Martinsburg, US (AOO)"
+        "label": "Altoona\/Martinsburg, US (AOO)"
     }, {
         "country": "US",
-        "city": "Altoona Martinsburg",
+        "city": "Altoona\/Martinsburg",
         "code": "AOO",
         "class": "us",
         "airport": "Altoona Blair County Airport",
-        "label": "Altoona Martinsburg, US (AOO)"
+        "label": "Altoona\/Martinsburg, US (AOO)"
     }, {
         "country": "US",
         "city": "Lewiston",
@@ -18866,25 +19102,25 @@ $(function(){
         "label": "Akiak, US (AKI)"
     }, {
         "country": "US",
-        "city": "Marietta Parkersburg",
+        "city": "Marietta\/Parkersburg",
         "code": "PKB",
         "class": "us",
         "airport": "Mid Ohio Valley Regional Airport",
-        "label": "Marietta Parkersburg, US (PKB)"
+        "label": "Marietta\/Parkersburg, US (PKB)"
     }, {
         "country": "US",
-        "city": "Marietta Parkersburg",
+        "city": "Marietta\/Parkersburg",
         "code": "PKB",
         "class": "us",
         "airport": "Mid Ohio Valley Regional Airport",
-        "label": "Marietta Parkersburg, US (PKB)"
+        "label": "Marietta\/Parkersburg, US (PKB)"
     }, {
         "country": "US",
-        "city": "Marietta Parkersburg",
+        "city": "Marietta\/Parkersburg",
         "code": "PKB",
         "class": "us",
         "airport": "Mid Ohio Valley Regional Airport",
-        "label": "Marietta Parkersburg, US (PKB)"
+        "label": "Marietta\/Parkersburg, US (PKB)"
     }, {
         "country": "US",
         "city": "Martha's Vineyard",
@@ -18943,32 +19179,32 @@ $(function(){
         "label": "Manhattan, US (MHK)"
     }, {
         "country": "US",
-        "city": "Akron Canton",
+        "city": "Akron\/Canton",
         "code": "CAK",
         "class": "us",
         "airport": "Akron Canton Regional Airport",
-        "label": "Akron Canton, US (CAK)"
+        "label": "Akron\/Canton, US (CAK)"
     }, {
         "country": "US",
-        "city": "Akron Canton",
+        "city": "Akron\/Canton",
         "code": "CAK",
         "class": "us",
         "airport": "Akron Canton Regional Airport",
-        "label": "Akron Canton, US (CAK)"
+        "label": "Akron\/Canton, US (CAK)"
     }, {
         "country": "US",
-        "city": "Akron Canton",
+        "city": "Akron\/Canton",
         "code": "CAK",
         "class": "us",
         "airport": "Akron Canton Regional Airport",
-        "label": "Akron Canton, US (CAK)"
+        "label": "Akron\/Canton, US (CAK)"
     }, {
         "country": "US",
-        "city": "Akron Canton",
+        "city": "Akron\/Canton",
         "code": "CAK",
         "class": "us",
         "airport": "Akron Canton Regional Airport",
-        "label": "Akron Canton, US (CAK)"
+        "label": "Akron\/Canton, US (CAK)"
     }, {
         "country": "US",
         "city": "Salina",
@@ -19048,25 +19284,25 @@ $(function(){
         "label": "Yakima, US (YKM)"
     }, {
         "country": "US",
-        "city": "Mcallen Mission",
+        "city": "Mcallen\/Mission",
         "code": "MFE",
         "class": "us",
         "airport": "Mc Allen Miller International Airport",
-        "label": "Mcallen Mission, US (MFE)"
+        "label": "Mcallen\/Mission, US (MFE)"
     }, {
         "country": "US",
-        "city": "Mcallen Mission",
+        "city": "Mcallen\/Mission",
         "code": "MFE",
         "class": "us",
         "airport": "Mc Allen Miller International Airport",
-        "label": "Mcallen Mission, US (MFE)"
+        "label": "Mcallen\/Mission, US (MFE)"
     }, {
         "country": "US",
-        "city": "Mcallen Mission",
+        "city": "Mcallen\/Mission",
         "code": "MFE",
         "class": "us",
         "airport": "Mc Allen Miller International Airport",
-        "label": "Mcallen Mission, US (MFE)"
+        "label": "Mcallen\/Mission, US (MFE)"
     }, {
         "country": "US",
         "city": "Akutan",
@@ -19086,7 +19322,7 @@ $(function(){
         "city": "Long Beach",
         "code": "LGB",
         "class": "us",
-        "airport": "Long Beach  Daugherty Field  Airport",
+        "airport": "Long Beach \/Daugherty Field\/ Airport",
         "label": "Long Beach, US (LGB)"
     }, {
         "country": "US",
@@ -19254,7 +19490,7 @@ $(function(){
         "city": "Aleknagik",
         "code": "WKK",
         "class": "us",
-        "airport": "Aleknagik New Airport",
+        "airport": "Aleknagik \/ New Airport",
         "label": "Aleknagik, US (WKK)"
     }, {
         "country": "US",
@@ -19419,18 +19655,18 @@ $(function(){
         "label": "Holy Cross, US (HCR)"
     }, {
         "country": "US",
-        "city": "Huntington Ashland",
+        "city": "Huntington\/Ashland",
         "code": "HTS",
         "class": "us",
-        "airport": "Tri-State Milton J. Ferguson Field",
-        "label": "Huntington Ashland, US (HTS)"
+        "airport": "Tri-State\/Milton J. Ferguson Field",
+        "label": "Huntington\/Ashland, US (HTS)"
     }, {
         "country": "US",
-        "city": "Huntington Ashland",
+        "city": "Huntington\/Ashland",
         "code": "HTS",
         "class": "us",
-        "airport": "Tri-State Milton J. Ferguson Field",
-        "label": "Huntington Ashland, US (HTS)"
+        "airport": "Tri-State\/Milton J. Ferguson Field",
+        "label": "Huntington\/Ashland, US (HTS)"
     }, {
         "country": "US",
         "city": "Huntsville",
@@ -19461,11 +19697,11 @@ $(function(){
         "label": "Huron, US (HON)"
     }, {
         "country": "US",
-        "city": "Bend Redmond",
+        "city": "Bend\/Redmond",
         "code": "RDM",
         "class": "us",
         "airport": "Roberts Field",
-        "label": "Bend Redmond, US (RDM)"
+        "label": "Bend\/Redmond, US (RDM)"
     }, {
         "country": "US",
         "city": "Bangor",
@@ -19559,32 +19795,32 @@ $(function(){
         "label": "Greenville, US (GLH)"
     }, {
         "country": "US",
-        "city": "Greenville Greer",
+        "city": "Greenville\/Greer",
         "code": "GSP",
         "class": "us",
         "airport": "Greenville Spartanburg International Airport",
-        "label": "Greenville Greer, US (GSP)"
+        "label": "Greenville\/Greer, US (GSP)"
     }, {
         "country": "US",
-        "city": "Greenville Greer",
+        "city": "Greenville\/Greer",
         "code": "GSP",
         "class": "us",
         "airport": "Greenville Spartanburg International Airport",
-        "label": "Greenville Greer, US (GSP)"
+        "label": "Greenville\/Greer, US (GSP)"
     }, {
         "country": "US",
-        "city": "Greenville Greer",
+        "city": "Greenville\/Greer",
         "code": "GSP",
         "class": "us",
         "airport": "Greenville Spartanburg International Airport",
-        "label": "Greenville Greer, US (GSP)"
+        "label": "Greenville\/Greer, US (GSP)"
     }, {
         "country": "US",
-        "city": "Greenville Greer",
+        "city": "Greenville\/Greer",
         "code": "GSP",
         "class": "us",
         "airport": "Greenville Spartanburg International Airport",
-        "label": "Greenville Greer, US (GSP)"
+        "label": "Greenville\/Greer, US (GSP)"
     }, {
         "country": "US",
         "city": "Grand Forks",
@@ -19636,11 +19872,11 @@ $(function(){
         "label": "Corpus Christi, US (CRP)"
     }, {
         "country": "US",
-        "city": "Bedford Hanscom",
+        "city": "Bedford\/Hanscom",
         "code": "BED",
         "class": "us",
         "airport": "Laurence G Hanscom Field",
-        "label": "Bedford Hanscom, US (BED)"
+        "label": "Bedford\/Hanscom, US (BED)"
     }, {
         "country": "US",
         "city": "Baton Rouge",
@@ -19685,18 +19921,18 @@ $(function(){
         "label": "Hancock, US (CMX)"
     }, {
         "country": "US",
-        "city": "Hailey Sun Valley",
+        "city": "Hailey\/Sun Valley",
         "code": "SUN",
         "class": "us",
         "airport": "Friedman Memorial Airport",
-        "label": "Hailey Sun Valley, US (SUN)"
+        "label": "Hailey\/Sun Valley, US (SUN)"
     }, {
         "country": "US",
-        "city": "Bay City Midland Saginaw",
+        "city": "Bay City\/Midland\/Saginaw",
         "code": "MBS",
         "class": "us",
         "airport": "MBS International Airport",
-        "label": "Bay City Midland Saginaw, US (MBS)"
+        "label": "Bay City\/Midland\/Saginaw, US (MBS)"
     }, {
         "country": "US",
         "city": "Gulfport",
@@ -19930,32 +20166,32 @@ $(function(){
         "label": "Arctic Village, US (ARC)"
     }, {
         "country": "US",
-        "city": "Asheville Hendersonville",
+        "city": "Asheville\/Hendersonville",
         "code": "AVL",
         "class": "us",
         "airport": "Asheville Regional Airport",
-        "label": "Asheville Hendersonville, US (AVL)"
+        "label": "Asheville\/Hendersonville, US (AVL)"
     }, {
         "country": "US",
-        "city": "Asheville Hendersonville",
+        "city": "Asheville\/Hendersonville",
         "code": "AVL",
         "class": "us",
         "airport": "Asheville Regional Airport",
-        "label": "Asheville Hendersonville, US (AVL)"
+        "label": "Asheville\/Hendersonville, US (AVL)"
     }, {
         "country": "US",
-        "city": "Asheville Hendersonville",
+        "city": "Asheville\/Hendersonville",
         "code": "AVL",
         "class": "us",
         "airport": "Asheville Regional Airport",
-        "label": "Asheville Hendersonville, US (AVL)"
+        "label": "Asheville\/Hendersonville, US (AVL)"
     }, {
         "country": "US",
-        "city": "Asheville Hendersonville",
+        "city": "Asheville\/Hendersonville",
         "code": "AVL",
         "class": "us",
         "airport": "Asheville Regional Airport",
-        "label": "Asheville Hendersonville, US (AVL)"
+        "label": "Asheville\/Hendersonville, US (AVL)"
     }, {
         "country": "US",
         "city": "Columbus",
@@ -20028,11 +20264,11 @@ $(function(){
         "label": "International Falls, US (INL)"
     }, {
         "country": "US",
-        "city": "Corning Elmira",
+        "city": "Corning\/Elmira",
         "code": "ELM",
         "class": "us",
         "airport": "Elmira Corning Regional Airport",
-        "label": "Corning Elmira, US (ELM)"
+        "label": "Corning\/Elmira, US (ELM)"
     }, {
         "country": "US",
         "city": "Igiugig",
@@ -20052,7 +20288,7 @@ $(function(){
         "city": "Baltimore",
         "code": "BWI",
         "class": "us",
-        "airport": "Baltimore Washington International Thurgood Marshal Airport",
+        "airport": "Baltimore\/Washington International Thurgood Marshal Airport",
         "label": "Baltimore, US (BWI)"
     }, {
         "country": "US",
@@ -20199,28 +20435,28 @@ $(function(){
         "city": "Yuma",
         "code": "YUM",
         "class": "us",
-        "airport": "Yuma MCAS Yuma International Airport",
+        "airport": "Yuma MCAS\/Yuma International Airport",
         "label": "Yuma, US (YUM)"
     }, {
         "country": "US",
         "city": "Yuma",
         "code": "YUM",
         "class": "us",
-        "airport": "Yuma MCAS Yuma International Airport",
+        "airport": "Yuma MCAS\/Yuma International Airport",
         "label": "Yuma, US (YUM)"
     }, {
         "country": "US",
         "city": "Yuma",
         "code": "YUM",
         "class": "us",
-        "airport": "Yuma MCAS Yuma International Airport",
+        "airport": "Yuma MCAS\/Yuma International Airport",
         "label": "Yuma, US (YUM)"
     }, {
         "country": "US",
         "city": "Yuma",
         "code": "YUM",
         "class": "us",
-        "airport": "Yuma MCAS Yuma International Airport",
+        "airport": "Yuma MCAS\/Yuma International Airport",
         "label": "Yuma, US (YUM)"
     }, {
         "country": "US",
@@ -20357,18 +20593,18 @@ $(function(){
         "label": "Worland, US (WRL)"
     }, {
         "country": "US",
-        "city": "Prudhoe Bay Deadhorse",
+        "city": "Prudhoe Bay\/Deadhorse",
         "code": "SCC",
         "class": "us",
         "airport": "Deadhorse Airport",
-        "label": "Prudhoe Bay Deadhorse, US (SCC)"
+        "label": "Prudhoe Bay\/Deadhorse, US (SCC)"
     }, {
         "country": "US",
-        "city": "Prudhoe Bay Deadhorse",
+        "city": "Prudhoe Bay\/Deadhorse",
         "code": "SCC",
         "class": "us",
         "airport": "Deadhorse Airport",
-        "label": "Prudhoe Bay Deadhorse, US (SCC)"
+        "label": "Prudhoe Bay\/Deadhorse, US (SCC)"
     }, {
         "country": "US",
         "city": "El Dorado",
@@ -20399,11 +20635,11 @@ $(function(){
         "label": "Crescent City, US (CEC)"
     }, {
         "country": "US",
-        "city": "Carmel Monterey",
+        "city": "Carmel\/Monterey",
         "code": "MRY",
         "class": "us",
         "airport": "Monterey Peninsula Airport",
-        "label": "Carmel Monterey, US (MRY)"
+        "label": "Carmel\/Monterey, US (MRY)"
     }, {
         "country": "US",
         "city": "Providence",
@@ -20675,7 +20911,7 @@ $(function(){
         "city": "Minneapolis",
         "code": "MSP",
         "class": "us",
-        "airport": "Minneapolis-St Paul International Wold-Chamberlain Airport",
+        "airport": "Minneapolis-St Paul International\/Wold-Chamberlain Airport",
         "label": "Minneapolis, US (MSP)"
     }, {
         "country": "US",
@@ -21312,7 +21548,7 @@ $(function(){
         "city": "Binghamton",
         "code": "BGM",
         "class": "us",
-        "airport": "Greater Binghamton Edwin A Link field",
+        "airport": "Greater Binghamton\/Edwin A Link field",
         "label": "Binghamton, US (BGM)"
     }, {
         "country": "US",
@@ -21421,11 +21657,11 @@ $(function(){
         "label": "Abilene, US (ABI)"
     }, {
         "country": "US",
-        "city": "Chisholm Hibbing",
+        "city": "Chisholm\/Hibbing",
         "code": "HIB",
         "class": "us",
         "airport": "Chisholm Hibbing Airport",
-        "label": "Chisholm Hibbing, US (HIB)"
+        "label": "Chisholm\/Hibbing, US (HIB)"
     }, {
         "country": "US",
         "city": "Monroe",
@@ -21655,14 +21891,14 @@ $(function(){
         "city": "Boise",
         "code": "BOI",
         "class": "us",
-        "airport": "Boise Air Terminal Gowen field",
+        "airport": "Boise Air Terminal\/Gowen field",
         "label": "Boise, US (BOI)"
     }, {
         "country": "US",
         "city": "Boise",
         "code": "BOI",
         "class": "us",
-        "airport": "Boise Air Terminal Gowen field",
+        "airport": "Boise Air Terminal\/Gowen field",
         "label": "Boise, US (BOI)"
     }, {
         "country": "US",
@@ -21827,11 +22063,11 @@ $(function(){
         "label": "Bellingham, US (BLI)"
     }, {
         "country": "US",
-        "city": "Fall River New Bedford",
+        "city": "Fall River\/New Bedford",
         "code": "EWB",
         "class": "us",
         "airport": "New Bedford Regional Airport",
-        "label": "Fall River New Bedford, US (EWB)"
+        "label": "Fall River\/New Bedford, US (EWB)"
     }, {
         "country": "US",
         "city": "Nuiqsut",
@@ -21865,7 +22101,7 @@ $(function(){
         "city": "Palmdale",
         "code": "PMD",
         "class": "us",
-        "airport": "Palmdale Regional USAF Plant 42 Airport",
+        "airport": "Palmdale Regional\/USAF Plant 42 Airport",
         "label": "Palmdale, US (PMD)"
     }, {
         "country": "US",
@@ -22061,7 +22297,7 @@ $(function(){
         "city": "Montevideo",
         "code": "MVD",
         "class": "uru",
-        "airport": "Carrasco International  General C L Berisso Airport",
+        "airport": "Carrasco International \/General C L Berisso Airport",
         "label": "Montevideo, Uruguay (MVD)"
     }, {
         "country": "Uruguay",
@@ -22801,8 +23037,6 @@ $(function(){
         "tags":"mango"
     }];
 
-    $component_origin="#origin";
-    $component_destination="#destination";
 
     $.widget( "custom.catcomplete", $.ui.autocomplete, {
 
@@ -22823,7 +23057,7 @@ $(function(){
             $.each( items, function( index, item ) {
                 var li;
                 if ( item.country != currentCategory ) {
-                    ul.append( "<div class='titlex ui-autocomplete-category " + item.country + "'><span class='country-name'>" + item.country + "</span><span class='country-flag flg flg-"+item.class+"'></span> </div>" );
+                    ul.append( "<div class='titlex ui-autocomplete-category " + item.country + "'><span class='country-name'>" + item.country + "</span><span class='country-flag "+item.class+"'></span> </div>" );
                     currentCategory = item.country;
                 }
 
@@ -22836,128 +23070,81 @@ $(function(){
         },
 
         _renderItem: function( ul, item ) {
+            // return $( "<li>" )
+            //     .addClass(item.country)
+            //     .attr( "data-value", item.city )
+            //     .append( $( "<a>" ).text( item.city ) )
+            //     .append( $( "<span>" ).text( item.code ) )
+            //     .appendTo( ul );
             return $( "<li class='"+item.country+"' data-value='"+item.city+"'><a><div><span class='item-left'>"+item.city+"</span><span class='item-right'>"+item.code+"</span></div><div class='item-airport'>"+item.airport+"</div> </a></li>" )
                 .appendTo( ul );
         }
 
     });
 
-    /* Origin */
-
-    $($component_origin).on( "focus", function(event, ui ) {
+    $( "#departure" ).on( "focus", function( event, ui ) {
         $(this).select();
-        if($(this).val()!=""){
-            $(this).catcomplete( "search" ,$(this).val().slice(0, 3));
-        }else{
         $(this).catcomplete( "search" ,"111");
-        }
 
     } );
 
-    function custom_source(request, response) {
-        var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
-        response($.grep(countries, function (value) {
-            return matcher.test(value.city)
-                || matcher.test(value.country)
-                || matcher.test(value.airport)
-                || matcher.test(value.code)
-                || matcher.test(value.label)
-                || matcher.test(value.isrecent);
-        }));
-    }
 
-    $($component_origin).catcomplete({
-        source: custom_source,
-        delay:0,
-        minLength: 1,
-        autoFocus: true,
-        open : function() {
-            $(".overlay").remove();
-            $("body").append("<div class='overlay'></div>");
 
-        },
-        close : function(event, ui) {
-            $(".overlay").remove();
-        },
-        response: function(event, ui) {
-            if (!ui.content.length) {
-                var noResult = { country:"",city:"NO RESULT FOUND",code:"",airport:"Please type country, city, airport or country code" };
-                ui.content.push(noResult);
-            } else {
-                $("#message").empty();
-            }
+
+        function custom_source(request, response) {
+         //  var matcher = new RegExp($.ui.autocomplete.escapeRegex(request.term), "i");
+            var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
+          //  response( $.grep( data, function( item ){
+            response($.grep(countries, function (value) {
+                return matcher.test(value.city)
+                    || matcher.test(value.country)
+                    || matcher.test(value.airport)
+                    || matcher.test(value.code)
+                    || matcher.test(value.isrecent);
+            }));
         }
+    // $("#departure").on('click', function () {
+    //     $("#departure").catcomplete("search");
+    //
+    // });
 
-    });
 
-    $($component_origin).keydown(function(e) {
+        $( "#departure" ).catcomplete({
+            source: custom_source,
+            delay:0,
+            minLength: 1,
+            autoFocus: true,
+            open : function() {
+                $(".overlay").remove();
+                $("body").append("<div class='overlay'></div>");
+
+            },
+            close : function(event, ui) {
+               $(".overlay").remove();
+            },
+            response: function(event, ui) {
+                if (!ui.content.length) {
+                    var noResult = { country:"",city:"NO RESULT FOUND",code:"",airport:"Please type country, city, airport or country code" };
+                    ui.content.push(noResult);
+                    //$("#message").text("No results found");
+                } else {
+                    $("#message").empty();
+                }
+            }
+
+        });
+
+
+    $('#departure').keydown(function(e) {
         if (e.altKey) {
             e.preventDefault();
         } else {
             var key = e.keyCode;
-            if (!((key == 8) || (key == 9) || (key == 32) || (key == 46) || (key >= 35 && key <= 40) || (key >= 65 && key <= 90))) {
+            if (!((key == 8) || (key == 32) || (key == 46) || (key >= 35 && key <= 40) || (key >= 65 && key <= 90))) {
                 e.preventDefault();
             }
         }
     });
 
-    /* Destination */
-
-    $($component_destination).on( "focus", function(event, ui ) {
-        $(this).select();
-        if($(this).val()!=""){
-            $(this).catcomplete( "search" ,$(this).val().slice(0, 3));
-        }else{
-            $(this).catcomplete( "search" ,"111");
-        }
-
-    } );
-
-    function custom_source(request, response) {
-        var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
-        response($.grep(countries, function (value) {
-            return matcher.test(value.city)
-                || matcher.test(value.country)
-                || matcher.test(value.airport)
-                || matcher.test(value.code)
-                || matcher.test(value.label)
-                || matcher.test(value.isrecent);
-        }));
-    }
-
-    $($component_destination).catcomplete({
-        source: custom_source,
-        delay:0,
-        minLength: 1,
-        autoFocus: true,
-        open : function() {
-            $(".overlay").remove();
-            $("body").append("<div class='overlay'></div>");
-
-        },
-        close : function(event, ui) {
-            $(".overlay").remove();
-        },
-        response: function(event, ui) {
-            if (!ui.content.length) {
-                var noResult = { country:"",city:"NO RESULT FOUND",code:"",airport:"Please type country, city, airport or country code" };
-                ui.content.push(noResult);
-            } else {
-                $("#message").empty();
-            }
-        }
-
-    });
-
-    $($component_destination).keydown(function(e) {
-        if (e.altKey) {
-            e.preventDefault();
-        } else {
-            var key = e.keyCode;
-            if (!((key == 8) || (key == 9) || (key == 32) || (key == 46) || (key >= 35 && key <= 40) || (key >= 65 && key <= 90))) {
-                e.preventDefault();
-            }
-        }
-    });
 
 });

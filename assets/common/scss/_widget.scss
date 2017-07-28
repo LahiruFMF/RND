@@ -1,3 +1,6 @@
+@import "countries";
+@import "datepicker";
+
 .widget {
   border: 1px solid #333;
 
@@ -20,20 +23,6 @@
   font-size: 12px;
   color: #b3afaf;
   width: 100%;
-}
-
-.country-flag {
-  width: 20px;
-  height: 12px;
-  float: right;
-  background-image: url("../img/default-flag.png");
-  background-repeat: no-repeat;
-
-}
-
-.sri {
-  background-image: url("../img/sri.png");
-  background-repeat: no-repeat;
 }
 
 .ui-widget {
@@ -136,4 +125,8 @@
 }
 .ui-autocomplete-category .country-name{
   color: #5f5f5f;
+}
+
+.input-field label{
+  font-weight:normal;
 }

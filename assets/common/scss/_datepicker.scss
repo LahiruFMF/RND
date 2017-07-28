@@ -1,0 +1,32 @@
+.dp-highlight-one .ui-state-default {
+  background: #fa1a00 !important;
+  color: #FFF;
+}
+.dp-highlight-end .ui-state-default {
+  background: #3a0900 !important;
+  color: #FFF;
+}
+.dp-highlight .ui-state-default {
+  background: #FAAE2A;
+  color: #FFF;
+}
+
+.dp-highlightxx .ui-state-default {
+  background: #fa6529;
+  color: #FFF;
+}
+
+.dp-highlightddd .ui-state-default {
+  background: #6afa6b;
+  color: #FFF;
+}
+
+.ui-datepicker-current-day .ui-state-default {
+  background: #4469fa;
+  color: #FFF;
+}
+
+.ui-datepicker-calendar tbody tr .dp-highlight:last-child{
+  background: #fa00e4;
+  color: #FFF;
+}
