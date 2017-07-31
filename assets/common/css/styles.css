@@ -985,33 +985,89 @@ body {
   height: 12px;
   background-position: -1px -2633px; }
 
+.ui-datepicker {
+  width: 50em !important;
+  left: 36% !important;
+  right: 0;
+  margin: 0 auto;
+  padding-bottom: 7px;
+  font-family: "Roboto", Arial, sans-serif; }
+  .ui-datepicker th {
+    font-weight: 500;
+    font-size: 12px;
+    color: #696969; }
+  .ui-datepicker td {
+    padding: 0px; }
+  .ui-datepicker .ui-datepicker-header {
+    background: transparent;
+    font-weight: normal;
+    border: none; }
+    .ui-datepicker .ui-datepicker-header .ui-icon {
+      background-image: url("../img/datepicker-next-pre.png"); }
+  .ui-datepicker td span, .ui-datepicker td a {
+    padding: 11px;
+    text-align: center; }
+  .ui-datepicker .ui-state-default, .ui-datepicker .ui-widget-header .ui-state-default {
+    border: 1px solid #ececec;
+    background: transparent;
+    font-weight: normal;
+    color: #717171;
+    font-size: 16px; }
+
 .dp-highlight-one .ui-state-default {
-  background: #fa1a00 !important;
-  color: #FFF; }
+  background: #bfedfa;
+  color: #153c96; }
 
 .dp-highlight-end .ui-state-default {
   background: #3a0900 !important;
   color: #FFF; }
 
 .dp-highlight .ui-state-default {
-  background: #FAAE2A;
-  color: #FFF; }
+  background: #c3e2f1;
+  color: #164880; }
 
 .dp-highlightxx .ui-state-default {
   background: #fa6529;
   color: #FFF; }
 
-.dp-highlightddd .ui-state-default {
-  background: #6afa6b;
-  color: #FFF; }
-
 .ui-datepicker-current-day .ui-state-default {
-  background: #4469fa;
-  color: #FFF; }
+  background: #f267fa !important;
+  color: #FFF !important; }
 
-.ui-datepicker-calendar tbody tr .dp-highlight:last-child {
-  background: #fa00e4;
-  color: #FFF; }
+.dp-highlight .ui-state-hover {
+  background: #4084c4 !important;
+  color: #FFF !important;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px; }
+
+.dp-highlight-clicked .ui-state-default {
+  background: #c3e2f1;
+  color: #164880; }
+
+.dp-highlight-clicked .ui-state-active {
+  background: #f267fa !important;
+  color: #FFF !important; }
+
+.dp-highlight-same .ui-state-default {
+  background: #f267fa !important;
+  color: #FFF !important; }
+
+.startDay .ui-state-default {
+  background: #3976af !important;
+  color: #FFF !important;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px; }
+
+.endDay .ui-state-default {
+  background: #3976af !important;
+  color: #FFF !important;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px; }
+
+.holiday a {
+  background-image: url(https://fmffiles.s3.amazonaws.com/files/holiday.-FMF1488953924.jpg) !important;
+  background-repeat: no-repeat !important;
+  background-position: top right !important; }
 
 .widget {
   border: 1px solid #333; }
@@ -1035,7 +1091,6 @@ body {
   font-size: 1.1em; }
 
 .ui-widget-content {
-  max-height: 300px;
   border: none;
   border-radius: 2px;
   box-shadow: 0px 0px 22px rgba(51, 51, 51, 0.39);

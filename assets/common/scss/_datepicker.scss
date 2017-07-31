@@ -1,14 +1,60 @@
+
+
+.ui-datepicker{
+
+  width: 50em !important;
+  left: 36% !important;
+  right: 0;
+  margin: 0 auto;
+  padding-bottom: 7px;
+  font-family: "Roboto", Arial, sans-serif;
+
+
+  th {
+    font-weight: 500;
+    font-size: 12px;
+    color: #696969;
+  }
+  td{
+    padding: 0px;
+  }
+  .ui-datepicker-header{
+    background: transparent;
+    font-weight: normal;
+    border:none;
+
+    .ui-icon {
+      background-image: url("../img/datepicker-next-pre.png");
+
+    }
+  }
+
+  td span, td a {
+    padding: 11px;
+    text-align: center;
+  }
+
+  .ui-state-default,  .ui-widget-header .ui-state-default {
+    border: 1px solid #ececec;
+    background: transparent;
+    font-weight: normal;
+    color: #717171;
+    font-size: 16px;
+  }
+
+}
+
 .dp-highlight-one .ui-state-default {
-  background: #fa1a00 !important;
-  color: #FFF;
+  background: #bfedfa;
+  color: #153c96;
 }
 .dp-highlight-end .ui-state-default {
   background: #3a0900 !important;
   color: #FFF;
 }
 .dp-highlight .ui-state-default {
-  background: #FAAE2A;
-  color: #FFF;
+  background: #c3e2f1;
+  color: #164880;
 }
 
 .dp-highlightxx .ui-state-default {
@@ -16,17 +62,54 @@
   color: #FFF;
 }
 
-.dp-highlightddd .ui-state-default {
-  background: #6afa6b;
-  color: #FFF;
-}
 
 .ui-datepicker-current-day .ui-state-default {
-  background: #4469fa;
-  color: #FFF;
+  background: #f267fa !important;
+  color: #FFF !important;
 }
 
-.ui-datepicker-calendar tbody tr .dp-highlight:last-child{
-  background: #fa00e4;
-  color: #FFF;
+.dp-highlight .ui-state-hover{
+  background: #4084c4 !important;
+  color: #FFF !important;
+
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.dp-highlight-clicked .ui-state-default {
+  background: #c3e2f1;
+  color: #164880;
+}
+.dp-highlight-clicked .ui-state-active {
+  background: #f267fa !important;
+  color: #FFF !important;
+}
+
+.dp-highlight-same .ui-state-default {
+  background: #f267fa !important;
+  color: #FFF !important;
+}
+.startDay .ui-state-default {
+  background: #3976af !important;
+  color: #FFF !important;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+.endDay .ui-state-default {
+  background: #3976af !important;
+  color: #FFF !important;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+//.ui-datepicker-days-cell-over .ui-state-default {
+//  background: #2a24fa !important;
+//  color: #FFF !important;
+//}
+
+
+.holiday a {
+  background-image: url(https://fmffiles.s3.amazonaws.com/files/holiday.-FMF1488953924.jpg) !important;
+  background-repeat: no-repeat !important;
+  background-position: top right !important;
+
 }
